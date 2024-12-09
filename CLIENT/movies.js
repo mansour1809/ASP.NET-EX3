@@ -9,13 +9,13 @@ $(document).ready(() => {
   });  filterButtons();
   $("#showMovies").click(renderMovies);
   $("#showWishlist").click(() => {
-    $("#moviesContainer").addClass('d-none');
+    $("#movieDiv").addClass('d-none');
     $("#castFormContainer").addClass('d-none');
     $("#wishlistContainer").removeClass('d-none');
     ajaxCall("GET", moviesApi, null, scbShowWishList, ecbShowWishList);
 });
   $("#showCasts").click(() => {
-    $("#moviesContainer").addClass('d-none');
+    $("#movieDiv").addClass('d-none');
     $("#wishlistContainer").addClass('d-none');
     $("#castFormContainer").removeClass('d-none');
     ajaxCall("GET", castsApi, null, scbCasts, ecb);
@@ -269,17 +269,6 @@ filterButtons = () => {
 addMovie = (e)=>{
   e.preventDefault(); // Prevent the default form submission behavior
 
-  // Serialize the form data
- // const formData = $(this).serialize();
-
-  // AJAX call to send data to the server
-//   ajaxCall("POST", castsApi, JSON.stringify(newCast), (data) => {
-//     scbcastadded(data);
-//     if (data) {
-//       addSingleCastToDOM(newCast); 
-//     }},ecb);
-//   // ajaxCall("GET", castsApi, null, scbCasts, ecb);
-// }
   ajaxCall("POST", moviesApi, JSON.stringify(newCast),(response)=>{
     if (response.success) {
       Swal.fire({

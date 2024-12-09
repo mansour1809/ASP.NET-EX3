@@ -3,9 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
     <title>Document</title>
 </head>
 <body>
-    
+    <div class="login-form-container">
+        <h2 class="login-h2">Login</h2>
+        <form>
+            <label class="login-form-label" for="username">Username</label>
+            <input class="login-form-input" type="text" id="username" name="username" placeholder="Enter your username" required>
+
+            <label class="login-form-label" for="password">Password</label>
+            <input class="login-form-input" type="password" id="password" name="password" placeholder="Enter your password" required>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        <button class="signup-btn" id="signupButton">Sign Up</button>
+        <div id="message"></div>
+    </div>
+    <script>
+       // פונקציה להצגת הודעות למשתמש
+function showMessage(message, isError = false) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = message;
+    messageDiv.style.color = isError ? 'red' : 'green';
+}
+
+// קריאה ל-Login
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // קבלת פרטי הטופס
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // קריאת Fetch לשרת
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            showMessage(`Welcome, ${data.username}!`);
+        })
+        .catch(error => {
+            showMessage(error.message, true);
+        });
+});
+
+// קריאה ל-Sign Up
+document.getElementById('signupButton').addEventListener('click', function () {
+    // תוכל להוסיף פעולה נוספת אם צריך, לדוגמה לעבור לדף רישום אחר
+    window.location.href = '/signup';  // לדוגמה, למעבר לדף רישום
+});
+
+
+    </script>
 </body>
 </html>

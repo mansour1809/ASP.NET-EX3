@@ -207,3 +207,72 @@ function ajaxCall(method, api, data, successCB, errorCB) {
     error: errorCB,
   });
 }
+
+
+//
+async function fetchMovies() {
+  try {
+      const response = await fetch('/api/movies'); // Replace with your API endpoint
+      if (!response.ok) throw new Error('Failed to fetch movies');
+      const movies = await response.json();
+      renderMovies(movies);
+  } catch (error) {
+      console.error(error);
+      alert("Error fetching movies from the database.");
+  }
+}
+
+
+function renderMovies(movies) {
+  const movieContainer = document.getElementById('movies-container');
+  movieContainer.innerHTML = ''; 
+
+  movies.forEach(movie => {
+      const movieCard = `
+          <div class="movie-card">
+              <img src="${movie.photoUrl}" alt="${movie.title}" class="movie-image" />
+              <h3>${movie.title}</h3>
+              <p>${movie.description}</p>
+              <p><strong>Rating:</strong> ${movie.rating}</p>
+              <p><strong>Income:</strong> $${movie.income.toLocaleString()}</p>
+              <p><strong>Release Year:</strong> ${movie.releaseYear}</p>
+              <p><strong>Duration:</strong> ${movie.duration} min</p>
+              <p><strong>Language:</strong> ${movie.language}</p>
+              <p><strong>Genre:</strong> ${movie.genre}</p>
+              <button onclick="addToWishlist(${movie.id})">Add to Wishlist</button>
+          </div>
+      `;
+      movieContainer.innerHTML += movieCard;
+  });
+}
+
+
+document.getElementById('add-movie-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+
+  const newMovie = Object.fromEntries(formData.entries());
+
+ 
+  newMovie.rating = parseFloat(newMovie.rating);
+  newMovie.income = parseInt(newMovie.income, 10);
+  newMovie.releaseYear = parseInt(newMovie.releaseYear, 10);
+  newMovie.duration = parseInt(newMovie.duration, 10);
+
+  try {
+      const response = await fetch('/api/movies', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newMovie),
+      });
+
+      if (!response.ok) throw new Error('Failed to add movie');
+      alert('Movie added successfully!');
+      fetchMovies(); 
+  } catch (error) {
+      console.error(error);
+      alert('Error adding movie to the database.');
+  }
+});
+
+fetchMovies();

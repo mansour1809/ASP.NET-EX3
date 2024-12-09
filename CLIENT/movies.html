@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="allMovies.js"></script>
+    <script src="movies.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Movies Website</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+      <div class="container">
+        <span class="navbar-brand">Movies Website</span>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
+          <div class="navbar-nav">
+            <button
+              id="showMovies"
+              class="btn btn-outline-light me-2 mb-2 mb-lg-0"
+            >
+              All Movies
+            </button>
+            <button
+              id="showWishlist"
+              class="btn btn-outline-light me-2 mb-2 mb-lg-0"
+            >
+              My Wishlist
+            </button>
+            <button id="showCasts" class="btn btn-outline-light">
+              My Casts
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <!-- Movies  -->
+      <div
+        class="row"
+        id="moviesContainer"
+      ></div>
+      <!-- <button id="showMoreButton" class="btn btn-secondary mt-3">Show More</button> -->
+      
+      <!-- Wishlist  -->
+      <div id="wishlistContainer" class="d-none">
+        <!-- Filters -->
+        <div class="row mb-4">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Filter by Rating</label>
+            <div class="input-group">
+              <input
+                type="number"
+                id="rating"
+                class="form-control"
+                placeholder="Minimum rating..."
+              />
+              <button id="filterByRating" class="btn btn-primary">
+                Filter
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Filter by Duration</label>
+            <div class="input-group">
+              <input
+                type="number"
+                id="duration"
+                class="form-control"
+                placeholder="Maximum duration..."
+              />
+              <button id="filterByDuration" class="btn btn-primary">
+                Filter
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Wishlist Movies -->
+        <h2>My Wishlist</h2>
+        <div
+          class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
+          id="wishListMovies"
+        ></div>
+      </div>
+
+      <div class="Container" id="castFormContainer">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title text-center mb-4">Add New Cast Member</h2>
+
+                <form id="castForm">
+                  <div class="mb-3">
+                    <label for="id" class="form-label">ID</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id"
+                      required
+                      pattern="^\d{9}$"
+                      title="ID must be exactly 9 digits."
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="name"
+                      required
+                      minlength="3"
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="role" class="form-label">Role</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="role"
+                      required
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="dateOfBirth" class="form-label"
+                      >Date of Birth</label
+                    >
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="dateOfBirth"
+                      required
+                    />
+                    <div id="dateError" class="invalid-feedback"></div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="country"
+                      required
+                      minlength="3"
+                    />
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="photoUrl" class="form-label">Photo URL</label>
+                    <input
+                      type="url"
+                      class="form-control"
+                      id="photoUrl"
+                      required
+                      pattern="^(https?:\/\/.+|data:image\/[a-zA-Z]+;base64,.+)$"
+                      title="Photo must be a valid URL starting with http:// or https://, or a Base64 image"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    id="submitBTN"
+                    class="btn btn-primary w-100"
+                  >
+                    Add Cast Member
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Casts -->
+        <div id="castsDetails" class="casts-grid"></div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  </body>
+</html>

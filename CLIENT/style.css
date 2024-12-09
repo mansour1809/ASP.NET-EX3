@@ -1,0 +1,285 @@
+/* Custom Variables */
+:root {
+   --primary-color: #1a237e;
+   --primary-hover: #0d47a1;
+   --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+   --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
+   --shadow-lg: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* Base Styles */
+body {
+   background: #f0f2f5;
+}
+
+/* Navbar Custom Styles */
+.navbar {
+   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+   box-shadow: var(--shadow-sm);
+}
+
+.navbar .btn {
+   transition: transform 0.3s ease;
+}
+
+.navbar .btn:hover {
+   transform: translateY(-2px);
+}
+
+/* Card Enhancements */
+.card {
+   border: none;
+   box-shadow: var(--shadow-md);
+   transition: transform 0.3s ease;
+}
+
+.card:hover {
+   transform: translateY(-5px);
+   box-shadow: var(--shadow-lg);
+}
+
+.card-img-top {
+   height: 330px;
+   object-fit: cover;
+}
+
+/* Custom Badge Styles */
+.badge {
+   /* padding: 0.5rem 1rem; */
+   font-weight: normal;
+}
+
+/* Form Customization */
+.form-control:focus {
+   border-color: var(--primary-color);
+   box-shadow: 0 0 0 0.25rem rgba(26, 35, 126, 0.25);
+}
+
+/* Error Message */
+.error-message {
+   color: #dc3545;
+   font-size: 0.875rem;
+   display: none;
+}
+
+/* Loading Animation */
+.loading {
+   text-align: center;
+   padding: 2rem;
+   color: #666;
+}
+
+.loading:after {
+   content: '...';
+   animation: dots 1s steps(5, end) infinite;
+}
+/* 
+@keyframes dots {
+   0%, 20% { content: '.'; }
+   40% { content: '..'; }
+   60% { content: '...'; }
+   80% { content: '....'; }
+   100% { content: '.....'; }
+} */
+
+/* Cast Cards */
+.cast-card {
+   animation: fadeIn 0.5s ease-out;
+}
+
+/* @keyframes fadeIn {
+   from {
+       opacity: 0;
+       transform: translateY(20px);
+   }
+   to {
+       opacity: 1;
+       transform: translateY(0);
+   }
+} */
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+   .card-img-top {
+       height: 300px;
+   }
+   
+   .navbar .btn {
+       margin: 0.25rem;
+   }
+}
+
+/* Disabled Button States */
+.btn:disabled {
+   background-color: #cccccc !important;
+   opacity: 0.7;
+   cursor: not-allowed;
+   transform: none !important;
+}
+
+/* Performance Optimizations */
+.card-img-top {
+   transform: translateZ(0);
+   backface-visibility: hidden;
+   will-change: transform;
+}
+/* Control image sizes consistently across all cards */
+#wishListMovies .card-img-top,
+#wishListMovies .movie-card img {
+    height: 300px;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Ensure consistent card heights */
+#wishListMovies .movie-card {
+   margin-bottom: 8px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Make description take remaining space */
+#wishListMovies .movie-card p {
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Cast Form Styles */
+.cast-form-container {
+   max-width: 800px;
+   margin: 2rem auto;
+   padding: 2rem;
+}
+
+/* Form Validation Styles */
+.form-control:valid {
+   border-color: #198754 !important;  /* Bootstrap's success color */
+   background-color: #f8fff9;
+}
+
+.form-control:invalid {
+   border-color: #dc3545 !important;  /* Bootstrap's danger color */
+   background-color: #fff8f8;
+}
+
+/* Error Message */
+.error-message {
+   color: #dc3545;
+   font-size: 0.875rem;
+   margin-top: 0.25rem;
+   display: none;
+}
+
+/* Cast Cards Container */
+#castsDetails {
+   margin-top: 3rem;
+}
+
+.casts-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+   gap: 2rem;
+   padding: 1rem;
+}
+
+/* Individual Cast Card */
+.cast-card {
+   background: white;
+   border-radius: 12px;
+   overflow: hidden;
+   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   transition: transform 0.3s ease;
+   height: 100%;
+}
+
+.cast-card:hover {
+   transform: translateY(-5px);
+   box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.cast-card h3 {
+   padding: 1rem;
+   margin: 0;
+   color: #1a237e;
+   font-size: 1.2rem;
+   border-bottom: 1px solid #eee;
+}
+
+.cast-info {
+   padding: 1rem;
+}
+
+.cast-info p {
+   margin: 0.5rem 0;
+   color: #666;
+}
+
+.cast-info strong {
+   color: #333;
+   margin-right: 0.5rem;
+}
+
+.cast-photo {
+   width: 100%;
+   height: 300px;
+   object-fit: cover;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+   .cast-form-container {
+       margin: 1rem;
+       padding: 1rem;
+   }
+   
+   .casts-grid {
+       grid-template-columns: 1fr;
+       gap: 1rem;
+   }
+}
+
+/* Form Input Focus States */
+.form-control:focus {
+   border-color: #1a237e;
+   box-shadow: 0 0 0 0.25rem rgba(26, 35, 126, 0.25);
+}
+
+/* Submit Button */
+#submitBTN {
+   background-color: #1a237e;
+   border: none;
+   transition: all 0.3s ease;
+}
+
+#submitBTN:hover {
+   background-color: #0d47a1;
+   transform: translateY(-2px);
+}
+@media (max-width: 991px) {
+   .navbar-nav {
+       padding: 1rem 0;
+   }
+   
+   .navbar-nav .btn {
+       width: 100%;
+       margin-right: 0 !important;
+   }
+}
+
+img[loading="lazy"] {
+   /* filter: blur(10px); Optional blur effect while loading */
+   transition: filter 0.3s ease-in-out;
+ }
+ 
+ img[loading="lazy"].loaded {
+   filter: none;
+ }
+ img {
+   filter: blur(1px) brightness(0.8);
+   -webkit-filter: blur(1px) brightness(0.8);
+}
+  img:hover{
+   filter: blur(0px) brightness(0.8);
+   -webkit-filter: blur(0px) brightness(0.8);
+}

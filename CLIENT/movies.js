@@ -1,25 +1,36 @@
 
-const castsApi = "https://localhost:7125/api/Casts";
 const moviesApi = "https://localhost:7125/api/Movies";
 $(document).ready(() => {
+  if (localStorage.getItem('isLoggedIn') === 'true') {
+    $('#welcomeMessage').text(`Welcome, ${localStorage.getItem('userName')}!`);
+    $('#signOutButton').show(); // Show sign-out button
+} else {
+    window.location.href = 'login.html';
+}
+$('#signOutButton').click(()=>{
+  localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userName');
+  window.location.href = 'login.html';
+
+})
+
   $('#movieForm').on('submit', addMovie)
 
   $('#addMovie').click(() => {
     $('#addMovieModal').modal('show');
   });  filterButtons();
+
   $("#showMovies").click(renderMovies);
+
+
   $("#showWishlist").click(() => {
     $("#movieDiv").addClass('d-none');
-    $("#castFormContainer").addClass('d-none');
+     $("#castFormContainer").addClass('d-none');
     $("#wishlistContainer").removeClass('d-none');
     ajaxCall("GET", moviesApi, null, scbShowWishList, ecbShowWishList);
 });
-  $("#showCasts").click(() => {
-    $("#movieDiv").addClass('d-none');
-    $("#wishlistContainer").addClass('d-none');
-    $("#castFormContainer").removeClass('d-none');
-    ajaxCall("GET", castsApi, null, scbCasts, ecb);
-});
+
+
   $("#filterByRating").click(() => {
     $("#duration").val("");
     $("#filterByDuration").prop("disabled", true);
@@ -42,12 +53,10 @@ $(document).ready(() => {
       ecbShowWishList
     );
   });
-  $("#castForm").submit(submitCasts);
-  $("#dateOfBirth").on("input", () => {
-    $("#dateError").hide();
-  });
+ 
   renderMovies();
 });
+
 checkYear = () => {
   const currentYear = new Date().getFullYear();
   const yearOfBirth = new Date($("#dateOfBirth").val()).getFullYear();
@@ -58,56 +67,14 @@ checkYear = () => {
   }
   return true;
 };
-submitCasts = (event) => {
-  event.preventDefault();
-  if (checkYear()) {
-    const newCast = {
-      id: $("#id").val(),
-      name: $("#name").val(),
-      role: $("#role").val(),
-      dateOfBirth: $("#dateOfBirth").val(),
-      country: $("#country").val(),
-      photoUrl: $("#photoUrl").val(),
-    };
-    ajaxCall("POST", castsApi, JSON.stringify(newCast), (data) => {
-      scbcastadded(data);
-      if (data) {
-        addSingleCastToDOM(newCast); 
-      }},ecb);
-    // ajaxCall("GET", castsApi, null, scbCasts, ecb);
-  }
-};
 
-scbCasts = (casts) => {
-  const castsDetailsDiv = $("#castsDetails");
-  castsDetailsDiv.empty()
-                 .addClass('casts-grid');
-  casts.forEach(addSingleCastToDOM);
-};
 
-addSingleCastToDOM = (cast) => {
-  const castElement = `
-      <div class="cast-card">
-          <img src="${cast.photoUrl}" alt="${cast.name}" class="cast-photo">
-          <div class="cast-info">
-              <h3>${cast.name}</h3>
-              <p><strong>Role:</strong> ${cast.role}</p>
-              <p><strong>Date of Birth:</strong> ${cast.dateOfBirth}</p>
-              <p><strong>Country:</strong> ${cast.country}</p>
-          </div>
-      </div>`;
-  $("#castsDetails").append(castElement);
-};
-scbcastadded = (data) => {
-  Swal.fire({
-    title: data ? "The cast has been added!" : "The cast already exists!",
-    text: data ? "Form submitted successfully!" : "Add one with a different ID, please!",
-    icon: data ? "success" : "error",
-  });
-};
+
+
+
 
 renderMovies = () => {
-  $("#wishlistContainer, #castFormContainer").addClass('d-none');
+   $("#wishlistContainer, #castFormContainer").addClass('d-none');
   $("#moviesContainer").removeClass('d-none');
   let moviesHtml = "";
   movies.forEach((movie) => {
@@ -176,13 +143,6 @@ ecbShowWishList = () => {
     icon: data ? "success" : "error",
   });
 }),
-  (ecb = () => {
-    Swal.fire({
-      title: "OH NO!!!!!!!",
-      text: "Something went wrong with the server!",
-      icon: "error",
-    });
-  });
 
 addToWishlist = (movieId) => {
   const movieToAdd = movies.find((m) => m.id === movieId);
@@ -200,76 +160,10 @@ filterButtons = () => {
 };
 
 
-
-// //
-// async function fetchMovies() {
-//   try {
-//       const response = await fetch('/api/movies'); // Replace with your API endpoint
-//       if (!response.ok) throw new Error('Failed to fetch movies');
-//       const movies = await response.json();
-//       renderMovies(movies);
-//   } catch (error) {
-//       console.error(error);
-//       alert("Error fetching movies from the database.");
-//   }
-// }
-
-
-// function renderMovies(movies) {
-//   const movieContainer = document.getElementById('movies-container');
-//   movieContainer.innerHTML = ''; 
-
-//   movies.forEach(movie => {
-//       const movieCard = `
-//           <div class="movie-card">
-//               <img src="${movie.photoUrl}" alt="${movie.title}" class="movie-image" />
-//               <h3>${movie.title}</h3>
-//               <p>${movie.description}</p>
-//               <p><strong>Rating:</strong> ${movie.rating}</p>
-//               <p><strong>Income:</strong> $${movie.income.toLocaleString()}</p>
-//               <p><strong>Release Year:</strong> ${movie.releaseYear}</p>
-//               <p><strong>Duration:</strong> ${movie.duration} min</p>
-//               <p><strong>Language:</strong> ${movie.language}</p>
-//               <p><strong>Genre:</strong> ${movie.genre}</p>
-//               <button onclick="addToWishlist(${movie.id})">Add to Wishlist</button>
-//           </div>
-//       `;
-//       movieContainer.innerHTML += movieCard;
-//   });
-// }
-
-
-// document.getElementById('add-movie-form').addEventListener('submit', async function (e) {
-//   e.preventDefault();
-//   const formData = new FormData(e.target);
-//   const newMovie = Object.fromEntries(formData.entries());
-//   newMovie.rating = parseFloat(newMovie.rating);
-//   newMovie.income = parseInt(newMovie.income, 10);
-//   newMovie.releaseYear = parseInt(newMovie.releaseYear, 10);
-//   newMovie.duration = parseInt(newMovie.duration, 10);
-
-//   try {
-//       const response = await fetch('/api/movies', {
-//           method: 'POST',
-//           headers: { 'Content-Type': 'application/json' },
-//           body: JSON.stringify(newMovie),
-//       });
-
-//       if (!response.ok) throw new Error('Failed to add movie');
-//       alert('Movie added successfully!');
-//       fetchMovies(); 
-//   } catch (error) {
-//       console.error(error);
-//       alert('Error adding movie to the database.');
-//   }
-// });
-
-// fetchMovies();
-
 addMovie = (e)=>{
   e.preventDefault(); // Prevent the default form submission behavior
 
-  ajaxCall("POST", moviesApi, JSON.stringify(newCast),(response)=>{
+  ajaxCall("POST", moviesApi, JSON.stringify(),(response)=>{
     if (response.success) {
       Swal.fire({
         icon: 'success',

@@ -3,18 +3,16 @@ const castsApi = "https://localhost:7125/api/Casts";
 $(document).ready(()=>{
 
     $("#showCasts").click(() => {
-        $("#movieDiv").addClass('d-none');
+        $("#moviesContainer").addClass('d-none');
         $("#wishlistContainer").addClass('d-none');
         $("#castFormContainer").removeClass('d-none');
+        $("#addMovie").hide();
         ajaxCall("GET", castsApi, null, 
             
             (casts)=>{
             $("#castsDetails").empty().addClass('casts-grid');
-            casts.forEach((cast)=>{ $("#castsDetails").append(`<h3>hello world</h3>`)})
-            console.log($("#castsDetails").html());
-
-            }
-            
+            console.log(casts)
+            casts.forEach(addSingleCastToDOMo)}
             , ecb);
     });
 
@@ -22,9 +20,8 @@ $(document).ready(()=>{
     $("#dateOfBirth").on("input", () => {
       $("#dateError").hide();
     });    
-
-
 })
+
 
 submitCasts = (event) => {
     event.preventDefault();
@@ -42,7 +39,8 @@ submitCasts = (event) => {
             title: data ? "The cast has been added!" : "The cast already exists!",
             text: data ? "Form submitted successfully!" : "Add one with a different ID, please!",
             icon: data ? "success" : "error",
-          }).then(addSingleCastToDOM(newCast))
+          });
+          (addSingleCastToDOM(newCast))
         },ecb());
     }
   };

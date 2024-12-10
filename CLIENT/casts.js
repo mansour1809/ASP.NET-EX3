@@ -8,11 +8,10 @@ $(document).ready(()=>{
         $("#castFormContainer").removeClass('d-none');
         $("#addMovie").hide();
         ajaxCall("GET", castsApi, null, 
-            
             (casts)=>{
             $("#castsDetails").empty().addClass('casts-grid');
             console.log(casts)
-            casts.forEach(addSingleCastToDOMo)}
+            casts.forEach(addSingleCastToDOM)}
             , ecb);
     });
 
@@ -21,7 +20,6 @@ $(document).ready(()=>{
       $("#dateError").hide();
     });    
 })
-
 
 submitCasts = (event) => {
     event.preventDefault();
@@ -37,7 +35,7 @@ submitCasts = (event) => {
       ajaxCall("POST", castsApi, JSON.stringify(newCast), (data) => {
         Swal.fire({
             title: data ? "The cast has been added!" : "The cast already exists!",
-            text: data ? "Form submitted successfully!" : "Add one with a different ID, please!",
+            text: data ? "Form submitted successfully!" : "Add one with a different name, please!",
             icon: data ? "success" : "error",
           });
           (addSingleCastToDOM(newCast))
@@ -46,7 +44,7 @@ submitCasts = (event) => {
   };
 
 
-  addSingleCastToDOMo = (cast) => {
+   addSingleCastToDOM = (cast) => {
     const castElement = `
         <div class="cast-card">
             <img src="${cast.photoUrl}" alt="${cast.name}" class="cast-photo">
@@ -68,3 +66,21 @@ submitCasts = (event) => {
       icon: "error",
     });
   };
+
+
+  checkYear = () => {
+    const currentYear = new Date().getFullYear();
+    const yearOfBirth = new Date($("#dateOfBirth").val()).getFullYear();
+    if (yearOfBirth < currentYear - 100 || yearOfBirth > currentYear - 18) {
+      $("#dateError")
+        .html(
+          `Year of birth must be between ${currentYear - 100} and ${
+            currentYear - 18
+          }.`
+        )
+        .show();
+      return false;
+    }
+    return true;
+  };
+  

@@ -1,35 +1,36 @@
-
 const moviesApi = "https://localhost:7125/api/Movies";
+
 $(document).ready(() => {
-  if (localStorage.getItem('isLoggedIn') === 'true') {
-    $('#welcomeMessage').text(`Welcome, ${localStorage.getItem('userName')}!`);
-    $('#signOutButton').show(); // Show sign-out button
-} else {
-    window.location.href = 'login.html';
-}
-$('#signOutButton').click(()=>{
-  localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('userName');
-  window.location.href = 'login.html';
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    $("#welcomeMessage").text(`Welcome, ${localStorage.getItem("userName")}!`);
+    $("#signOutButton").show(); // Show sign-out button
+  } else {
+    window.location.href = "login.html";
+  }
 
-})
+  $("#signOutButton").click(() => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userName");
+    window.location.href = "login.html";
+  });
 
-  $('#movieForm').on('submit', addMovie)
+  $("#movieForm").on("submit", addMovie);
 
-  $('#addMovie').click(() => {
-    $('#addMovieModal').modal('show');
-  });  filterButtons();
+  $("#addMovie").click(() => {
+    $("#addMovieModal").modal("show");
+  });
+
+  filterButtons();
 
   $("#showMovies").click(renderMovies);
 
-
   $("#showWishlist").click(() => {
-    $("#movieDiv").addClass('d-none');
-     $("#castFormContainer").addClass('d-none');
-    $("#wishlistContainer").removeClass('d-none');
+    $("#moviesContainer").addClass("d-none");
+    $("#castFormContainer").addClass("d-none");
+    $("#wishlistContainer").removeClass("d-none");
+    $("#addMovie").hide();
     ajaxCall("GET", moviesApi, null, scbShowWishList, ecbShowWishList);
-});
-
+  });
 
   $("#filterByRating").click(() => {
     $("#duration").val("");
@@ -53,7 +54,7 @@ $('#signOutButton').click(()=>{
       ecbShowWishList
     );
   });
- 
+
   renderMovies();
 });
 
@@ -61,24 +62,26 @@ checkYear = () => {
   const currentYear = new Date().getFullYear();
   const yearOfBirth = new Date($("#dateOfBirth").val()).getFullYear();
   if (yearOfBirth < currentYear - 100 || yearOfBirth > currentYear - 18) {
-    $("#dateError").html(`Year of birth must be between ${currentYear - 100} and ${currentYear - 18}.`)
+    $("#dateError")
+      .html(
+        `Year of birth must be between ${currentYear - 100} and ${
+          currentYear - 18
+        }.`
+      )
       .show();
     return false;
   }
   return true;
 };
 
-
-
-
-
-
 renderMovies = () => {
-   $("#wishlistContainer, #castFormContainer").addClass('d-none');
-  $("#moviesContainer").removeClass('d-none');
+  $("#castFormContainer").addClass("d-none");
+  $("#wishlistContainer").addClass("d-none");
+  $("#moviesContainer").removeClass("d-none");
+  $("#addMovie").show();
   let moviesHtml = "";
   movies.forEach((movie) => {
-      moviesHtml += `
+    moviesHtml += `
           <div class="col-lg-3 col-md-4 col-sm-6">
               <div class="card h-100">
                   <img loading="lazy" src="${movie.photoUrl}" class="card-img-top" alt="${movie.title}  loading="lazy"">
@@ -102,7 +105,9 @@ renderMovies = () => {
 };
 scbShowWishList = (wishlist) => {
   let wishlistHtml = `
-      ${wishlist.map(movie => `
+      ${wishlist
+        .map(
+          (movie) => `
         <div class="col">
           <div class="card h-100 movie-card">
           <div class="img-container">
@@ -127,7 +132,9 @@ scbShowWishList = (wishlist) => {
             </div>
           </div>
         </div>
-      `).join('')}
+      `
+        )
+        .join("")}
     </div>
   `;
   $("#wishListMovies").html(wishlistHtml);
@@ -139,55 +146,60 @@ ecbShowWishList = () => {
 (scb = (data) => {
   Swal.fire({
     title: data ? "Added!" : "The movie already exists!",
-    text: data ? "The movie added to the wish list!" : "Add different one, please!",
+    text: data
+      ? "The movie added to the wish list!"
+      : "Add different one, please!",
     icon: data ? "success" : "error",
   });
 }),
-
-addToWishlist = (movieId) => {
-  const movieToAdd = movies.find((m) => m.id === movieId);
-  ajaxCall("POST", moviesApi, JSON.stringify(movieToAdd), scb, ecb); //sending the movie to server
-};
+  (addToWishlist = (movieId) => {
+    const movieToAdd = movies.find((m) => m.id === movieId);
+    ajaxCall("POST", moviesApi, JSON.stringify(movieToAdd), scb, ecb); //sending the movie to server
+  });
 
 filterButtons = () => {
-    $("#rating").on("input", function() {
-        $("#filterByRating").prop("disabled", !this.value);
-    });
-    $("#duration").on("input", function() {
-        $("#filterByDuration").prop("disabled", !this.value);
-    });
-    $("#filterByRating, #filterByDuration").prop("disabled", true);
+  $("#rating").on("input", function () {
+    $("#filterByRating").prop("disabled", !this.value);
+  });
+  $("#duration").on("input", function () {
+    $("#filterByDuration").prop("disabled", !this.value);
+  });
+  $("#filterByRating, #filterByDuration").prop("disabled", true);
 };
 
-
-addMovie = (e)=>{
+addMovie = (e) => {
   e.preventDefault(); // Prevent the default form submission behavior
 
-  ajaxCall("POST", moviesApi, JSON.stringify(),(response)=>{
-    if (response.success) {
+  ajaxCall(
+    "POST",
+    moviesApi,
+    JSON.stringify(),
+    (response) => {
+      if (response.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Movie Added!",
+          text: "The movie was added successfully.",
+        });
+        $("#addMovieModal").modal("hide"); // Hide the modal
+        $("#movieForm")[0].reset(); // Reset the form
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: response.message || "Failed to add the movie.",
+        });
+      }
+    },
+    () => {
       Swal.fire({
-        icon: 'success',
-        title: 'Movie Added!',
-        text: 'The movie was added successfully.',
-      });
-      $('#addMovieModal').modal('hide'); // Hide the modal
-      $('#movieForm')[0].reset(); // Reset the form
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: response.message || 'Failed to add the movie.',
+        icon: "error",
+        title: "Error",
+        text: "An error occurred while adding the movie.",
       });
     }
-  },()=>{
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'An error occurred while adding the movie.',
-    });
-  }
-)};
-
+  );
+};
 
 function ajaxCall(method, api, data, successCB, errorCB) {
   $.ajax({

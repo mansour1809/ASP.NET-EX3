@@ -58,21 +58,6 @@ $(document).ready(() => {
   renderMovies();
 });
 
-checkYear = () => {
-  const currentYear = new Date().getFullYear();
-  const yearOfBirth = new Date($("#dateOfBirth").val()).getFullYear();
-  if (yearOfBirth < currentYear - 100 || yearOfBirth > currentYear - 18) {
-    $("#dateError")
-      .html(
-        `Year of birth must be between ${currentYear - 100} and ${
-          currentYear - 18
-        }.`
-      )
-      .show();
-    return false;
-  }
-  return true;
-};
 
 renderMovies = () => {
   $("#castFormContainer").addClass("d-none");

@@ -11,6 +11,7 @@ $(document).ready(() => {
   $("#signOutButton").click(() => {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userName");
+    localStorage.removeItem("id");
     window.location.href = "login.html";
   });
 
@@ -20,25 +21,26 @@ $(document).ready(() => {
     $("#addMovieModal").modal("show");
   });
 
-  filterButtons();
-
-  $("#showMovies").click(renderMovies);
-
-  
-
-  
-
-  renderMovies();
+  $("#showMovies").click(checkWishListRenderMovies);
+  checkWishListRenderMovies();
 });
 
+checkWishListRenderMovies = ()=>{
+  ajaxCall("GET",wishlistApi  , null, 
+(wishlist)=>{
+  renderMovies(wishlist);
+}), renderMovies([]);}
 
-renderMovies = () => {
+
+renderMovies = (wishlist) => {
+  const wishlistIds = wishlist.map((movie) => movie.id); 
   $("#castFormContainer").addClass("d-none");
   $("#wishlistContainer").addClass("d-none");
   $("#moviesContainer").removeClass("d-none");
   $("#addMovie").show();
   let moviesHtml = "";
   movies.forEach((movie) => {
+    const isInWishlist = wishlistIds.includes(movie.id);
     moviesHtml += `
           <div class="col-lg-3 col-md-4 col-sm-6">
               <div class="card h-100">
@@ -53,25 +55,42 @@ renderMovies = () => {
                           <span class="badge bg-secondary">Year: ${movie.releaseYear}</span>
                           <span class="badge bg-info">Duration: ${movie.duration} min</span>
                       </div>
-                      <button class="btn btn-primary w-100" onclick="addToWishlist(${movie.id})">Add to Wishlist</button>
+                      <button class="btn btn-primary w-100" 
+                        id="button-${movie.id}" 
+                        onclick="addToWishlist(${movie.id})"
+                        ${isInWishlist ? "disabled" : ""}>Add to Wishlist</button>
                   </div>
               </div>
           </div>
       `;
+
   });
+
   $("#moviesContainer").html(moviesHtml);
 };
 
-
 addMovie = (e) => {
-  e.preventDefault(); // Prevent the default form submission behavior
-
+  e.preventDefault(); 
+  const newMovie = {
+    id: 0, 
+    title: $('#title').val(), 
+    rating: isNaN(parseFloat($('#ratingVal').val())) ? 0 :  parseFloat($('#rating').val()) ,
+    income: isNaN(parseInt($('#income').val(), 10)) ? 0 : parseInt($('#income').val(), 10) , 
+    releaseYear: parseInt($('#releaseYear').val(), 10),  
+    duration: parseInt($('#durationMin').val(), 10),
+    language: $('#language').val(), 
+    description: $('#description').val(), 
+    genre: $('#genre').val(), 
+    photoUrl: $('#photoUrl').val(), 
+  };
+  
+ 
   ajaxCall(
     "POST",
     moviesApi,
-    JSON.stringify(),
+    JSON.stringify(newMovie),
     (response) => {
-      if (response.success) {
+      if (response == true) {
         Swal.fire({
           icon: "success",
           title: "Movie Added!",

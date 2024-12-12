@@ -10,7 +10,6 @@ $(document).ready(()=>{
         ajaxCall("GET", castsApi, null, 
             (casts)=>{
             $("#castsDetails").empty().addClass('casts-grid');
-            console.log(casts)
             casts.forEach(addSingleCastToDOM)}
             , ecb);
     });

@@ -1,36 +1,40 @@
-
+const wishlistApi = moviesApi + "/WishList"+ "/userId/" + localStorage.getItem("id")
 
 $(document).ready(()=>{
 
     $("#showWishlist").click(renderWishList);
     $("#filterByRating").click(renderWishListByRating);
     $("#filterByDuration").click(renderWishListByDuration);
-    filterButtons();
 
+    $("#rating").on("input", function () {
+      $("#filterByRating").prop("disabled", !this.value);
+    });
+    $("#duration").on("input", function () {
+      $("#filterByDuration").prop("disabled", !this.value);
+    });
+    $("#filterByRating, #filterByDuration").prop("disabled", true);
 
 })
 
-renderWishList = () =>{
+ renderWishList = () =>{
     $("#moviesContainer").addClass("d-none");
     $("#castFormContainer").addClass("d-none");
     $("#wishlistContainer").removeClass("d-none");
     $("#addMovie").hide();
-    ajaxCall("GET", moviesApi, null, scbShowWishList, ecbShowWishList);
+    ajaxCall("GET",wishlistApi  , null, scbShowWishList, ecbShowWishList);
 
 }
-
 renderWishListByRating = () =>{
     $("#duration").val("");
     $("#filterByDuration").prop("disabled", true);
-    ajaxCall("GET",moviesApi + "/Rating/" + $("#rating").val(),null,scbShowWishList,ecbShowWishList);
+    ajaxCall("GET",wishlistApi + "/Rating/" + $("#rating").val(),null,scbShowWishList,ecbShowWishList);
 }
 
 renderWishListByDuration = () =>{
     $("#rating").val("");
     $("#filterByRating").prop("disabled", true);
-    ajaxCall("GET",moviesApi + "/Duration?duration=" + $("#duration").val(),null,scbShowWishList,ecbShowWishLis);
+    ajaxCall("GET",wishlistApi + "/Duration?duration=" + $("#duration").val(),null,scbShowWishList,ecbShowWishList);
 }
-
   
 scbShowWishList = (wishlist) => {
   let wishlistHtml = `
@@ -70,29 +74,13 @@ scbShowWishList = (wishlist) => {
 ecbShowWishList = () => {
   $("#wishListMovies").html("<p>No Movies to show</p>");
 };
+  addToWishlist = (movieID) => {
+    ajaxCall("POST", wishlistApi + "/movieId/" + movieID , null, 
+    Swal.fire({
+      title: "Added!" ,
+      text: "The movie added to the wish list!",
+      icon:  "success" ,
+    }), ecb); 
+    $(`#button-${movieID}`).prop("disabled" , true)
+  };
 
-///need to modifyyyyyyyyyYYYYYYYYYYYYYYYYYYYYYY  , handle adding to wishList!
-(scb = (data) => {
-  Swal.fire({
-    title: data ? "Added!" : "The movie already exists!",
-    text: data
-      ? "The movie added to the wish list!"
-      : "Add different one, please!",
-    icon: data ? "success" : "error",
-  });
-}),
-
-  (addToWishlist = (movieId) => {
-    const movieToAdd = movies.find((m) => m.id === movieId);
-    ajaxCall("POST", moviesApi, JSON.stringify(movieToAdd), scb, ecb); //sending the movie to server
-  });
-
-filterButtons = () => {
-  $("#rating").on("input", function () {
-    $("#filterByRating").prop("disabled", !this.value);
-  });
-  $("#duration").on("input", function () {
-    $("#filterByDuration").prop("disabled", !this.value);
-  });
-  $("#filterByRating, #filterByDuration").prop("disabled", true);
-};

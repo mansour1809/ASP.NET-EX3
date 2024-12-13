@@ -1,6 +1,8 @@
 const moviesApi = "https://localhost:7125/api/Movies";
 
 $(document).ready(() => {
+  $("#castFormContainer").addClass("d-none");
+
   if (localStorage.getItem("isLoggedIn") === "true") {
     $("#welcomeMessage").text(`Welcome, ${localStorage.getItem("userName")}!`);
     $("#signOutButton").show(); // Show sign-out button
@@ -12,8 +14,19 @@ $(document).ready(() => {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userName");
     localStorage.removeItem("id");
+    localStorage.removeItem("wishlistIds");
     window.location.href = "login.html";
   });
+
+   showLoading= ()=> {
+    $("#loadingIndicator").show();
+    $("#moviesContainer").hide();
+}
+
+ hideLoading= ()=> {
+    $("#loadingIndicator").hide();
+    $("#moviesContainer").show();
+}
 
   $("#movieForm").on("submit", addMovie);
 
@@ -26,19 +39,22 @@ $(document).ready(() => {
 });
 
 checkWishListRenderMovies = ()=>{
+  showLoading();
   ajaxCall("GET",wishlistApi  , null, 
 (wishlist)=>{
-  renderMovies(wishlist);
-}), renderMovies([]);}
-
-
-renderMovies = (wishlist) => {
   const wishlistIds = wishlist.map((movie) => movie.id); 
+  localStorage.setItem("wishlistIds", JSON.stringify(wishlistIds));
+  renderMovies(JSON.parse(localStorage.getItem("wishlistIds")) || []);
+}, ecb)}
+
+
+renderMovies = (wishlistIds) => {
   $("#castFormContainer").addClass("d-none");
   $("#wishlistContainer").addClass("d-none");
   $("#moviesContainer").removeClass("d-none");
   $("#addMovie").show();
   let moviesHtml = "";
+  ajaxCall("GET",moviesApi  , null, (movies)=>{
   movies.forEach((movie) => {
     const isInWishlist = wishlistIds.includes(movie.id);
     moviesHtml += `
@@ -63,11 +79,11 @@ renderMovies = (wishlist) => {
               </div>
           </div>
       `;
-
   });
 
   $("#moviesContainer").html(moviesHtml);
-};
+  hideLoading();
+}, ecb);}
 
 addMovie = (e) => {
   e.preventDefault(); 
@@ -83,7 +99,6 @@ addMovie = (e) => {
     genre: $('#genre').val(), 
     photoUrl: $('#photoUrl').val(), 
   };
-  
  
   ajaxCall(
     "POST",
@@ -91,6 +106,7 @@ addMovie = (e) => {
     JSON.stringify(newMovie),
     (response) => {
       if (response == true) {
+        showLoading();
         Swal.fire({
           icon: "success",
           title: "Movie Added!",
@@ -98,23 +114,28 @@ addMovie = (e) => {
         });
         $("#addMovieModal").modal("hide"); // Hide the modal
         $("#movieForm")[0].reset(); // Reset the form
+        checkWishListRenderMovies();
+        hideLoading();
       } else {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: response.message || "Failed to add the movie.",
+          text:  "This movie already exist.",
         });
       }
     },
-    () => {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "An error occurred while adding the movie.",
-      });
-    }
+    ecb
   );
 };
+ecb = () =>{
+  hideLoading();
+  Swal.fire({
+    icon: "error",
+    title: "Error",
+    text: "An error occurred while adding the movie.",
+  });
+
+}
 
 function ajaxCall(method, api, data, successCB, errorCB) {
   $.ajax({

@@ -37,6 +37,9 @@ renderWishListByDuration = () =>{
 }
   
 scbShowWishList = (wishlist) => {
+  if (!wishlist || wishlist.length === 0) {
+    ecbShowWishList();
+  return}
   let wishlistHtml = `
       ${wishlist.map((movie) => `
         <div class="col">
@@ -75,12 +78,15 @@ ecbShowWishList = () => {
   $("#wishListMovies").html("<p>No Movies to show</p>");
 };
   addToWishlist = (movieID) => {
-    ajaxCall("POST", wishlistApi + "/movieId/" + movieID , null, 
+    ajaxCall("POST", wishlistApi + "/movieId/" + movieID , null, ()=>{
+      $(`#button-${movieID}`).prop("disabled" , true);
+      const cachedWishlist = JSON.parse(localStorage.getItem("wishlistIds")) || [];
+    cachedWishlist.push(movieID); 
+    localStorage.setItem("wishlistIds", JSON.stringify(cachedWishlist));
     Swal.fire({
       title: "Added!" ,
       text: "The movie added to the wish list!",
       icon:  "success" ,
-    }), ecb); 
-    $(`#button-${movieID}`).prop("disabled" , true)
+    })}, ecb); 
   };
 

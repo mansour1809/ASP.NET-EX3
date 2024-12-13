@@ -1,60 +1,115 @@
-const userAPI = "https://localhost:7125/api/Users/login";
-// פונקציה להצגת הודעות למשתמש
+const userAPI = "https://localhost:7125/api/Users/";
 
 $(document).ready(() => {
-  $("#login-btn").click((event) => {
-    event.preventDefault();
-    const user = {
-      Id: 0,
-      userName: $("#username").val(),
-      email: "",
-      password: $("#password").val(),
-    };
-    ajaxCall(
-      "POST",
-      userAPI,
-      JSON.stringify(user),
-      (data) => {
-        console.log(data)
-        localStorage.setItem("isLoggedIn", "true"); // Or sessionStorage
-        localStorage.setItem("userName", user.userName);
-        localStorage.setItem("id", data);
-        Swal.fire({
-          title: "The user has been found!",
-          text: "Login successful!",
-          icon: "success",
-        }).then(() => {
-          window.location.href = "movies.html";
-        });
-      },
-      (xhr) => {
-        if (xhr.status === 401) {
-          Swal.fire({
-            title: "Unauthorized",
-            text: "Invalid username or password!",
-            icon: "error",
-          });
-        } else if (xhr.status === 400) {
-          Swal.fire({
-            title: "Bad Request",
-            text: "Check the data you entered and try again!",
-            icon: "error",
-          });
-        } else {
-          Swal.fire({
-            title: "Server Error",
-            text: "Something went wrong on the server!",
-            icon: "error",
-          });
-        }
-      }
-    );
+
+  $("#togglePassword").on("click", function () {
+    const passwordInput = $("#passwordLogin");
+    const icon = $(this).find("i");
+
+    if (passwordInput.attr("type") === "password") {
+        passwordInput.attr("type", "text");
+        icon.removeClass("fa-eye").addClass("fa-eye-slash");
+    } else {
+        passwordInput.attr("type", "password");
+        icon.removeClass("fa-eye-slash").addClass("fa-eye");
+    }
+});
+
+
+  localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("id");
+    localStorage.removeItem("wishlistIds");
+
+    $("#username").on("input", () => {
+      $("#userError").hide();
+    });
 
     $("#signupButton").click(() => {
       $("#signupModal").modal("show");
     });
+
+
+
+  $("#login-btn").click(checkUser =(event) => {
+    if(event != undefined)
+    event.preventDefault();
+    const user = {
+      Id: 0,
+      userName: $("#usernameLogin").val() || $('#username').val(),
+      email: "",
+      password: $("#passwordLogin").val() || $('#password').val()
+    };
+    ajaxCall(
+      "POST",
+      userAPI + "login",
+      JSON.stringify(user),
+      cbLogin,
+      ecbLogin
+    );
+
+  })
+
+    $("#registerForm").submit((e) => {
+      e.preventDefault();
+      const newUser = {
+        id:0,
+        userName:$('#username').val(),
+        email:$('#email').val(),
+        password:$('#password').val()
+      }
+      ajaxCall("POST", userAPI +"register", JSON.stringify(newUser),()=>{
+        // $('#username').val('')
+        // $('#email').val('')
+        // $('#password').val('')
+        Swal.fire({
+          title: "You can login now",
+          text: "Register successful!",
+          icon: "success",
+        })
+        checkUser()
+      } ,()=>{
+        $("#userError").html(`<span>User already exist!!!</span>`).show();}
+      );
   });
+
 });
+
+cbLogin = (data) => {
+  console.log(data);
+  localStorage.setItem("isLoggedIn", "true"); // Or sessionStorage
+  localStorage.setItem("userName", data.userName);
+  localStorage.setItem("id", data.id);
+  Swal.fire({
+    title: "The user has been found!",
+    text: "Login successful!",
+    icon: "success",
+  }).then(() => {
+    window.location.href = "movies.html";
+  });
+};
+
+ecbLogin = (xhr) => {
+  if (xhr.status === 401) {
+    Swal.fire({
+      title: "Unauthorized",
+      text: "Invalid username or password!",
+      icon: "error",
+    });
+  } else if (xhr.status === 400) {
+    Swal.fire({
+      title: "Bad Request",
+      text: "Check the data you entered and try again!",
+      icon: "error",
+    });
+  } else {
+    Swal.fire({
+      title: "Server Error",
+      text: "Something went wrong on the server!",
+      icon: "error",
+    });
+  }
+};
 
 function ajaxCall(method, api, data, successCB, errorCB) {
   $.ajax({

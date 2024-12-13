@@ -386,3 +386,21 @@ textarea {
    transition: color 0.3s ease;
 }
 
+
+
+.spinner {
+   border: 4px solid rgba(255, 255, 255, 0.3); /* Light color for the background */
+   border-top: 4px solid #3498db; /* Blue color for the spinning part */
+   border-radius: 50%;
+   width: 50px; /* Size of the spinner */
+   height: 50px; /* Size of the spinner */
+   animation: spin 1s linear infinite; /* Rotation animation */
+   margin: auto; /* Center it */
+ }
+ 
+ /* Animation to rotate the spinner */
+ @keyframes spin {
+   0% { transform: rotate(0deg); }
+   100% { transform: rotate(360deg); }
+ }
+ 

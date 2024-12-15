@@ -1,4 +1,5 @@
-const castsApi = "https://localhost:7125/api/Casts";
+// const castsApi = "https://localhost:7125/api/Casts";
+const castsApi = "https://proj.ruppin.ac.il/bgroup3/test2/tar1/api/Casts";
 
 $(document).ready(()=>{
 
@@ -11,7 +12,7 @@ $(document).ready(()=>{
             (casts)=>{
             $("#castsDetails").empty().addClass('casts-grid');
             casts.forEach(addSingleCastToDOM)}
-            , ecb);
+            , castecb);
     });
 
     $("#castForm").submit(submitCasts);
@@ -38,7 +39,7 @@ submitCasts = (event) => {
             icon: data ? "success" : "error",
           });
           (addSingleCastToDOM(newCast))
-        },ecb());
+        },castecb());
     }
   };
 
@@ -58,7 +59,7 @@ submitCasts = (event) => {
   };
 
 
-  ecb = () => {
+  castecb = () => {
     Swal.fire({
       title: "OH NO!!!!!!!",
       text: "Something went wrong with the server!",

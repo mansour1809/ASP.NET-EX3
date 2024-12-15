@@ -24,7 +24,7 @@ submitCasts = (event) => {
     event.preventDefault();
     if (checkYear()) {
       const newCast = {
-        id: $("#id").val(),
+        id: "",
         name: $("#name").val(),
         role: $("#role").val(),
         dateOfBirth: $("#dateOfBirth").val(),

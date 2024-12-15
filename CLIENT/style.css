@@ -162,6 +162,16 @@ body {
    border-color: #dc3545 !important;  /* Bootstrap's danger color */
    background-color: #fff8f8;
 }
+/* for the rating/duration */
+.form-control#rating:valid,.form-control#duration:valid {
+   border-color: #ffffff !important;  /* Bootstrap's success color */
+   background-color: #ffffff;
+}
+
+.form-control#duration:invalid , .form-control#rating:invalid {
+   border-color: #ffffff !important;  /* Bootstrap's danger color */
+   background-color: #ffffff;
+}
 
 /* Error Message */
 .error-message {

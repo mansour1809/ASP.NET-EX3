@@ -29,16 +29,13 @@ $(document).ready(() => {
       $("#signupModal").modal("show");
     });
 
-
-
-  $("#login-btn").click(checkUser =(event) => {
-    if(event != undefined)
+  $("#login-btn").click((event) => {
     event.preventDefault();
     const user = {
       Id: 0,
-      userName: $("#usernameLogin").val() || $('#username').val(),
+      userName: $("#usernameLogin").val(),
       email: "",
-      password: $("#passwordLogin").val() || $('#password').val()
+      password: $("#passwordLogin").val()
     };
     ajaxCall(
       "POST",
@@ -59,15 +56,11 @@ $(document).ready(() => {
         password:$('#password').val()
       }
       ajaxCall("POST", userAPI +"register", JSON.stringify(newUser),()=>{
-        // $('#username').val('')
-        // $('#email').val('')
-        // $('#password').val('')
         Swal.fire({
           title: "You can login now",
           text: "Register successful!",
           icon: "success",
         })
-        checkUser()
       } ,()=>{
         $("#userError").html(`<span>User already exist!!!</span>`).show();}
       );
@@ -76,12 +69,11 @@ $(document).ready(() => {
 });
 
 cbLogin = (data) => {
-  console.log(data);
-  localStorage.setItem("isLoggedIn", "true"); // Or sessionStorage
+  localStorage.setItem("isLoggedIn", "true"); 
   localStorage.setItem("userName", data.userName);
   localStorage.setItem("id", data.id);
   Swal.fire({
-    title: "The user has been found!",
+    title: "Welcome!",
     text: "Login successful!",
     icon: "success",
   }).then(() => {

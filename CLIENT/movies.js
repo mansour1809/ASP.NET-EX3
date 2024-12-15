@@ -1,6 +1,16 @@
 const moviesApi = "https://localhost:7125/api/Movies";
 
 $(document).ready(() => {
+
+  $('.navbar-nav button').on('click', function () {
+    const $navbarCollapse = $('#navbarNav');
+    if ($navbarCollapse.hasClass('show')) {
+        $navbarCollapse.collapse('hide');
+    }
+  });
+
+$('#releaseYear').attr('max',new Date().getFullYear());
+
   $("#castFormContainer").addClass("d-none");
 
   if (localStorage.getItem("isLoggedIn") === "true") {
@@ -97,7 +107,7 @@ addMovie = (e) => {
     language: $('#language').val(), 
     description: $('#description').val(), 
     genre: $('#genre').val(), 
-    photoUrl: $('#photoUrl').val(), 
+    photoUrl: $('#moviePhotoUrl').val(), 
   };
  
   ajaxCall(

@@ -39,7 +39,7 @@ submitCasts = (event) => {
             icon: data ? "success" : "error",
           });
           (addSingleCastToDOM(newCast))
-        },castecb());
+        },castecb);
     }
   };
 
